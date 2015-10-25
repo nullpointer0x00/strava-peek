@@ -82,7 +82,7 @@ function getUserActivities(){
 	function(token){
 	   accessToken = token.stravaAccessToken;
 	    var promise = $.ajax({
-	       url: 'https://www.strava.com/api/v3/activities/following?access_token=' + accessToken
+	       url: 'https://www.strava.com/api/v3/activities/following?per_page=10&access_token=' + accessToken
 	   }).done(
 	       function(json){
 		   html = "<ul>";
@@ -129,6 +129,10 @@ function secondsToClockTime(seconds){
 $(document).ready(function(){
     if( $('.popup-page').length == 1 ){
 	getUserActivities();
+	 $('body').on('click', 'a', function(){
+	     chrome.tabs.create({url: $(this).attr('href')});
+	     return false;
+	 });
     }
 
     if( $('.options-page').length ==1 ){
