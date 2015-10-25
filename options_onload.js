@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
     load_options();
 
     $('#save').click(function(){

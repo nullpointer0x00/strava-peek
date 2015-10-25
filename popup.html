@@ -4,9 +4,11 @@
  "browser_action" field in manifest.json contains the "default_popup" key with
  value "popup.html".
  -->
-<html>
+<html class="popup-page">
   <head>
-    <title>My Sandbox</title>
+    <title>Strave Peek</title>
+    <script src="jquery-2.1.4.min.js"></script>
+    <script src="strava-peek.js"></script>
     <style>
       body {
         font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
@@ -33,7 +35,8 @@
   <body>
     <div id="status"></div>
     <img id="image-result" hidden>
-    <h1>Hello World</h1>
+    <div class="dropdown">
+    </div>
   </body>
 </html>
 
