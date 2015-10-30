@@ -91,7 +91,12 @@ function getUserActivities(){
 		       html +=  createActivityHtmlRow(trans);  
 		   }
 		   html += "</ul>";
+		   $('#status').remove();
 		   $('.dropdown').append(html);
+	       }
+	   ).fail(
+	       function(json){
+		   $('#status').append(JSON.stringify(json));
 	       }
 	   );
 	}
