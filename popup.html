@@ -69,11 +69,24 @@
         font-weight: 600;
       }
 
+      .logo-large{
+        margin-left: 130px;
+      }
+
+      .spin {
+        -webkit-animation: spin 0.7s infinite linear;
+      }
+
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg);}
+        100% { -webkit-transform: rotate(360deg);}
+      }
     </style>
   </head>
   <body>
     <div class="dropdown">
-      <div id="status"><strong>Retrieving Activities</strong></div>
+      <div id="status"><img class="spin logo-large" src="icon128.png"></img>
+      </div>
     </div>
   </body>
 </html>

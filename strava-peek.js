@@ -4,12 +4,11 @@ var simpleFormPast = {"Ride" : "rode",
 function save_strava_access_token() {
     $("#jsonResponse").text("");
     var accessToken = $('#strava_access_token').val();
-    console.log("Token: " + accessToken);
     var status = $('#status');
     status.text('Access token saved.');
     setTimeout(function() {
-	status.text('');
-    }, 750);
+		status.text('');
+    	}, 750);
     syncSetStravaAccessToken(accessToken);
 }
 
@@ -17,33 +16,36 @@ function load_options() {
     var token = "";
     $("#jsonResponse").text("");
     chrome.storage.sync.get({
-	stravaAccessToken: ""
+		stravaAccessToken: ""
     }, function(items) {
-	token = items.stravaAccessToken;
-	$('#strava_access_token').val(token);
-	var athleteEndpoint = "https://www.strava.com/api/v3/athlete";
-	var url = athleteEndpoint + "?access_token=" + token;
-	console.log(url);
-	$.ajax({
-	    url: url,
-	    data: {
-		format: 'json'
-	    },
-	    success: function(data){
-		$("#jsonResponse").css("color", "black");
-		$("#jsonResponse").text(JSON.stringify(data));
-	    },
-	    error: function(data) {
-		if(data != null){
-		    $("#jsonResponse").text(JSON.stringify(data));
-		} else {
-		    $("#jsonResponse").text("Unexpected Error.");
-		}
-		$("#jsonResponse").css("color", "red");
-	    }
-
-	});
+		token = items.stravaAccessToken;
+		$('#strava_access_token').val(token);
+		var athleteEndpoint = "https://www.strava.com/api/v3/athlete";
+		var url = athleteEndpoint + "?access_token=" + token;
+		$.ajax({url: url})
+			.done(function(data){
+				$("#jsonResponse").css("color", "black");
+				$("#jsonResponse").append(createUserProfileHtml(data));
+			})
+			.fail(function(response){
+				if(response.status == 401){
+		    		$("#jsonResponse").text("Error authenticating access token.  Response from server: " + response.responseText);
+				} else {
+		    		$("#jsonResponse").text("Unexpected Error.");
+				}
+				$("#jsonResponse").css("color", "red");
+			})
+			.always(function(){
+				//clean stuff
+			});
     });
+}
+
+function createUserProfileHtml(user){
+	var html = "<a class='avatar-athlete' href='" + user.profile + "'>";
+    html += "<img class='avatar' src='" + user.profile_medium + "'>";
+    html += "<strong>" + user.firstname + " " + user.lastname + "</strong></a>";
+    return html;
 }
 
 function metersToMiles(meters){
@@ -85,7 +87,7 @@ function getUserActivities(){
 	       url: 'https://www.strava.com/api/v3/activities/following?per_page=10&access_token=' + accessToken
 	   }).done(
 	       function(json){
-		   html = "<ul>";
+		   var html = "<ul>";
 		   for(var i = 0; i < json.length; i++){
 		       var trans = transformActivity(json[i]);
 		       html +=  createActivityHtmlRow(trans);  
@@ -95,8 +97,13 @@ function getUserActivities(){
 		   $('.dropdown').append(html);
 	       }
 	   ).fail(
-	       function(json){
-		   $('#status').append(JSON.stringify(json));
+	       function(response){
+	       		if(response.status == 401){
+		   			$('#status').append("<p>Authorization Error.  Please check access_token from the options screen.</p>");
+				} else {
+					$('#status').append("<p>Unexpected error.  Status: " + response.status);
+				}
+				$(".spin").removeClass("spin");
 	       }
 	   );
 	}
