@@ -42,7 +42,7 @@ function load_options() {
 }
 
 function createUserProfileHtml(user){
-	var html = "<a class='avatar-athlete' href='" + user.profile + "'>";
+	var html = "<a class='avatar-athlete' href='https://www.strava.com/athletes/" + user.id + "'>";
     html += "<img class='avatar' src='" + user.profile_medium + "'>";
     html += "<strong>" + user.firstname + " " + user.lastname + "</strong></a>";
     return html;
