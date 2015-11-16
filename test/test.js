@@ -3,11 +3,12 @@ QUnit.test("Hello test!", function(assert){
 });
 
 QUnit.asyncTest("Test sync access token", function(assert){
+    ACCESS_TOKEN_KEY = "stravaAccessTokenTest";
     expect(1);
     syncSetStravaAccessToken("test");
     syncGetStravaAccessToken(
 	function(item){ 
-	    result = item.stravaAccessToken;
+	    result = item.stravaAccessTokenTest;
 	    assert.equal(result, "test");
 	    QUnit.start();
 	}

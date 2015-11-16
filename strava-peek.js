@@ -1,5 +1,9 @@
 var simpleFormPast = {"Ride" : "rode",
-		     "Run" : "ran"}
+		     "Run" : "ran"};
+
+var ACCESS_TOKEN_KEY = "stravaAccessToken";
+var RUN_GOAL_KEY = "runGoal";
+var RIDE_GOAL_KEY = "rideGoal";
 
 function save_strava_access_token() {
     $("#jsonResponse").text("");
@@ -10,6 +14,10 @@ function save_strava_access_token() {
 		status.text('');
     	}, 750);
     syncSetStravaAccessToken(accessToken);
+}
+
+function save_goal(type, val){
+
 }
 
 function load_options() {
@@ -111,13 +119,15 @@ function getUserActivities(){
 }
 
 function syncSetStravaAccessToken(accessToken){
-    chrome.storage.sync.set({
-	stravaAccessToken: accessToken
+    var save = {};
+	save[ACCESS_TOKEN_KEY] = accessToken;
+    chrome.storage.sync.set( save , function(){
+    	console.log(ACCESS_TOKEN_KEY + " : " + accessToken);
     });
 }
 
 function syncGetStravaAccessToken(callback){
-    chrome.storage.sync.get("stravaAccessToken", callback);
+    chrome.storage.sync.get(ACCESS_TOKEN_KEY, callback);
 }
 
 function secondsToClockTime(seconds){
