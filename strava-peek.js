@@ -7,17 +7,67 @@ var RIDE_GOAL_KEY = "rideGoal";
 
 function save_strava_access_token() {
     $("#jsonResponse").text("");
-    var accessToken = $('#strava_access_token').val();
+    var accessToken = $('#strava-access-token').val();
     var status = $('#status');
-    status.text('Access token saved.');
+    status.text('Saving access token.');
     setTimeout(function() {
 		status.text('');
     	}, 750);
     syncSetStravaAccessToken(accessToken);
 }
 
-function save_goal(type, val){
+function save_goal(type){
+	var goal = $('#' + type + '-goal').val();
+	var status = $('#status');
+	status.text('Saving ' + type + ' goal token.');
+    setTimeout(function() {
+		status.text('');
+    	}, 750);
+    syncSetGoal(type, goal)
+}
 
+function getGoalKey(type){
+	var key = null;
+	switch(type){
+		case "run":
+			key = RUN_GOAL_KEY;
+			break;
+		case "ride":
+			key = RIDE_GOAL_KEY;
+			break;
+		default:
+			break;
+	}
+	return key;
+}
+
+function syncSetGoal(type, goal){
+	var save = {};
+	var key = getGoalKey(type);
+	if(key == null  || goal == null || !$.isNumeric(goal)){
+		return;
+	}
+	save[key] = goal;
+	chrome.storage.sync.set(save, function(){
+    	console.log(key + " : " + goal);
+    });
+}
+
+function syncGetGoal(type, callback){
+	var key = getGoalKey(type);
+    chrome.storage.sync.get(key, callback);
+}
+
+function syncSetStravaAccessToken(accessToken){
+    var save = {};
+	save[ACCESS_TOKEN_KEY] = accessToken;
+    chrome.storage.sync.set( save , function(){
+    	console.log(ACCESS_TOKEN_KEY + " : " + accessToken);
+    });
+}
+
+function syncGetStravaAccessToken(callback){
+    chrome.storage.sync.get(ACCESS_TOKEN_KEY, callback);
 }
 
 function load_options() {
@@ -27,7 +77,7 @@ function load_options() {
 		stravaAccessToken: ""
     }, function(items) {
 		token = items.stravaAccessToken;
-		$('#strava_access_token').val(token);
+		$('#strava-access-token').val(token);
 		var athleteEndpoint = "https://www.strava.com/api/v3/athlete";
 		var url = athleteEndpoint + "?access_token=" + token;
 		$.ajax({url: url})
@@ -47,6 +97,19 @@ function load_options() {
 				//clean stuff
 			});
     });
+
+    load_goals();
+}
+
+function load_goals(){
+	syncGetGoal('run', function(items){
+		var goal = items.runGoal;
+		$('#run-goal').val(items.runGoal);
+	});
+	syncGetGoal('ride', function(items){
+		var goal = items.rideGoal;
+		$('#ride-goal').val(items.rideGoal);
+	});
 }
 
 function createUserProfileHtml(user){
@@ -118,18 +181,6 @@ function getUserActivities(){
     );
 }
 
-function syncSetStravaAccessToken(accessToken){
-    var save = {};
-	save[ACCESS_TOKEN_KEY] = accessToken;
-    chrome.storage.sync.set( save , function(){
-    	console.log(ACCESS_TOKEN_KEY + " : " + accessToken);
-    });
-}
-
-function syncGetStravaAccessToken(callback){
-    chrome.storage.sync.get(ACCESS_TOKEN_KEY, callback);
-}
-
 function secondsToClockTime(seconds){
     var frac = 0;
     var units = [3600, 60, 1];
@@ -159,11 +210,18 @@ $(document).ready(function(){
 
     if( $('.options-page').length ==1 ){
 	
-	load_options();
+		load_options();
 
-	$('#save').click(function(){
-	    save_strava_access_token();
-	    load_options();
-	});
-    }
+		$('#save').click(function(){
+	    	save_strava_access_token();
+	    	load_options();
+		});
+
+		$('.goal-save-button').click(function(){ 
+			var id = this.id; 
+			var type = id.split('-');
+			save_goal(type[0]);
+			load_goals();
+    	});
+	}
 });

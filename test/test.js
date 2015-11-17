@@ -14,6 +14,44 @@ QUnit.asyncTest("Test sync access token", function(assert){
 	}
     );
 });
+
+QUnit.asyncTest("Test sync run goal", function(assert){
+    RUN_GOAL_KEY = "runGoalTest";
+    expect(1);
+    syncSetGoal('run', 4567);
+    syncGetGoal('run',
+    function(item){ 
+        result = item.runGoalTest;
+        assert.equal(result, 4567);
+        QUnit.start();
+    }
+    );
+});
+
+QUnit.asyncTest("Test sync ride goal", function(assert){
+    RIDE_GOAL_KEY = "rideGoalTest";
+    expect(1);
+    syncSetGoal('ride', 1234);
+    syncGetGoal('ride',
+    function(item){ 
+        result = item.rideGoalTest;
+        assert.equal(result, 1234);
+        QUnit.start();
+    }
+    );
+});
+
+QUnit.test("Test getGoalKey", function(assert){
+    var runKey = getGoalKey('run');
+    var rideKey = getGoalKey('ride');
+    var invalid = getGoalKey('fjdlkajdl');
+    var invalidNull = getGoalKey(null);
+    assert.ok(runKey == RUN_GOAL_KEY, "Failed to getting run key");
+    assert.ok(rideKey == RIDE_GOAL_KEY, "Failed to getting ride key");
+    assert.ok(invalid == null, "Failed when passed invalid data");
+    assert.ok(invalidNull == null, "Failed when passed null data")
+});
+
 /*
 QUnit.test("Test ajax follow call.", function(assert){
     syncSetStravaAccessToken("test");

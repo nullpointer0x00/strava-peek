@@ -14,6 +14,14 @@ ul {
  padding: 0;
 }
 
+.container {
+  padding-top: 40px;
+}
+
+#status {
+  height: 12px;
+}
+
 .dropdown {
   width: 400px;
   margin-left: -1px;
