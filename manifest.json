@@ -1,7 +1,11 @@
 {
     "manifest_version" : 2, 
     "name" : "Strava Peek",
-    "options_page" : "options.html",
+    "options_page": "options.html",
+	"options_ui" : 
+	{"page":"options.html",
+	"chrome_style":true	
+	},
     "description" : "Peek at my feed.",
     "version" : "1.0", 
     "browser_action" : {
