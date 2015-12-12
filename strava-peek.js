@@ -1,5 +1,6 @@
 var simpleFormPast = {"Ride" : "rode",
-		     "Run" : "ran"};
+		     "Run" : "ran",
+		     "Walk" : "strolled"};
 
 var ACCESS_TOKEN_KEY = "stravaAccessToken";
 var RUN_GOAL_KEY = "runGoal";
